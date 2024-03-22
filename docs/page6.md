@@ -15,7 +15,7 @@ EXPLAIN SELECT * FROM my_table WHERE my_column = 'value';
 
 *Пример создания индекса:*
 ```sql
-CREATE INDEX idx_column ON my_table(column_name);
+CREATE INDEX idx_column O```N my_table(column_name);
 ```
 
 ## 6.3 Партиционирование

@@ -18,6 +18,7 @@ def my_function():
 if __name__ == "__main__":
     my_function()
 ```
+![alt text](images/image11.png)
 
 ## 5.2 Поиск утечек
 

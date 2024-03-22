@@ -13,14 +13,39 @@
 
 *Пример использования:*
 ```python
+#!/bin/python
 import cProfile
 
-def example_function():
-    # Код для профилирования
 
-if __name__ == "__main__":
-    cProfile.run("example_function()")
+def read_file(name: str) -> list:
+    with open(name,'r') as file:
+        return file.read().splitlines()
+
+def ignore_duplicates(titles: list) -> list:
+    return list(set(titles))
+
+def main() -> None:
+    original_titles = read_file('novels.txt')
+    safe_titles = ignore_duplicates(original_titles)
+    print(safe_titles)
+
+if __name__ == '__main__':
+    cProfile.run('main()')
 ```
+
+![alt text](images/image.png)
+
+- сортировка по количеству вызовов
+
+cProfile визуализация в GUI
+
+```shell
+pip install snakeviz
+python -m cProfile -o program.prof file.py
+snakeviz program.prof
+```
+![alt text](images/image2.png)
+
 
 ## 2.2 line_profiler
 
@@ -35,19 +60,29 @@ if __name__ == "__main__":
 
 *Пример использования:*
 ```python
-# Установка line_profiler: pip install line_profiler
-from line_profiler import LineProfiler
+import line_profiler
 
-lp = LineProfiler()
+lp = line_profiler.LineProfiler()
 
-@lp.profile
-def example_function():
-    # Код для профилирования
 
-if __name__ == "__main__":
-    example_function()
-    lp.print_stats()
+def function_with_issues():
+    return 'Some function with issues'
+
+lp.add_function(function_with_issues)
+
+# this could be any existing function as well, you don't have to write this from scratch
+def wrapper_function():
+    function_with_issues()
+
+wrapper = lp(wrapper_function)
+wrapper()
+
+lp.print_stats()
 ```
+
+![alt text](images/image3.png)
+
+![alt text](images/image4.png)
 
 ## 2.4 pyinstrument
 
@@ -59,7 +94,7 @@ if __name__ == "__main__":
 - **Анализ в реальном времени:** Отслеживание производительности кода в процессе выполнения.
 - **Поддержка асинхронного кода:** Способность профилировать асинхронные приложения.
 - **Легкость использования:** Минимальные изменения в коде для включения профилирования.
-
+![alt text](image5.png)
 ## 2.5 Django Debug Toolbar
 
 ### Роль в профилировании Django-приложений, примеры использования.
@@ -71,23 +106,8 @@ if __name__ == "__main__":
 - **Информация о запросах:** Отображение времени выполнения HTTP-запросов, шаблонов и использованных ресурсов.
 - **Легкость интеграции:** Включение через административный интерфейс Django.
 
-### Примеры использования
-```python
-# Установка Django Debug Toolbar: pip install django-debug-toolbar
-# В settings.py добавить 'debug_toolbar' в INSTALLED_APPS и MIDDLEWARE
-
-# Пример использования в views.py
-from django.shortcuts import render
-from django.db import connection
-
-def my_view(request):
-    # Ваш код
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM mytable")
-        result = cursor.fetchall()
-    
-    return render(request, 'my_template.html', {'data': result})
-```
+![alt text](images/image7.png)
+![alt text](images/image8.png)
 
 ## 2.6 Flask Debug Toolbar
 
@@ -100,6 +120,7 @@ def my_view(request):
 - **Анализ SQL-запросов:** Предоставление информации о выполненных SQL-запросах.
 - **Интеграция с Flask:** Легкость установки и использования в приложениях, основанных на Flask.
 
+![alt text](images/image9.png)
 
 ## 2.7 pbar.fastapi toolbar
 
@@ -111,19 +132,10 @@ def my_view(request):
 - **Отслеживание запросов:** Анализ времени выполнения HTTP-запросов в FastAPI.
 - **Интеграция в FastAPI:** Взаимодействие с интерфейсом FastAPI для простого использования.
 
-
-## 2.8 uvicorn --profile
-
-### Как использовать встроенную поддержку профилирования в Uvicorn.
-
-**Uvicorn** - это ASGI-сервер, предназначенный для запуска асинхронных веб-приложений. Он предоставляет встроенную поддержку профилирования, что позволяет разработчикам анализировать производительность своих приложений без использования сторонних инструментов.
-
-*Использование:*
-- **Команда --profile:** Запуск Uvicorn с параметром --profile для включения профилирования.
-- **Анализ результатов:** Просмотр результатов профилирования в консоли или сохранение в файл.
+![alt text](images/image10.png)
 
 
-## 2.9 aiohttp-devtools
+## 2.8 aiohttp-devtools
 
 ### Роль в асинхронных приложениях, примеры использования.
 
@@ -154,7 +166,7 @@ if __name__ == '__main__':
     web.run_app(app)
 ```
 
-## 2.10 py-spy
+## 2.10 py-spy  - https://github.com/benfred/py-spy
 
 ### Описание возможностей, сценарии использования.
 
@@ -171,7 +183,7 @@ if __name__ == '__main__':
 - **Оптимизация hotspots:** Выявление и оптимизация узких мест в коде.
 
 
-## 2.11 GlitchTip
+## 2.11 GlitchTip - https://glitchtip.com/
 
 ### Роль в обнаружении ошибок, взаимодействие с профилированием.
 
@@ -183,7 +195,7 @@ if __name__ == '__main__':
 - **Управление ошибками:** Предоставление средств для анализа и управления ошибками.
 
 
-## 2.12 Sentry
+## 2.12 Sentry - https://sentry.io/welcome/
 
 ### Как Sentry помогает в обработке и логировании ошибок, влияние на профилирование.
 
@@ -195,7 +207,7 @@ if __name__ == '__main__':
 - **Средства анализа ошибок:** Предоставление инструментов для анализа ошибок и их последствий.
 
 
-## 2.13 Locust
+## 2.13 Locust - https://locust.io/
 
 ### Роль в профилировании нагрузки, примеры сценариев использования.
 
@@ -220,7 +232,7 @@ class MyUser(HttpUser):
         self.client.get("/my-endpoint")
 ```
 
-## 2.14 pytest-benchmark
+## 2.14 pytest-benchmark - https://pytest-benchmark.readthedocs.io/en/stable/
 
 ### Описание возможностей, использование в тестировании производительности.
 
